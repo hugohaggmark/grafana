@@ -7,7 +7,8 @@ import { Field, RadioButtonGroup, useStyles2, Stack } from '@grafana/ui';
 
 import { getTrailSettings } from '../utils';
 
-import { AutoQueryDef, AutoQueryInfo } from './AutoQueryEngine';
+import { AutoQueryDef } from './AutoQueryEngine';
+import { AutoQueryInfo } from './types';
 
 export interface AutoVizPanelState extends SceneObjectState {
   panel?: VizPanel;
