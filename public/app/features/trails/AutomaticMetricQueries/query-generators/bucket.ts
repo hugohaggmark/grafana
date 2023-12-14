@@ -7,7 +7,8 @@ import { AutoQueryDef } from '../types';
 export function bucketMetricQueriesGenerator(metricParts: string[]) {
   let unit = 'short';
 
-  const metric = metricParts.join('_');
+  const title = `${VAR_METRIC_EXPR}`;
+
   const unitSuffix = metricParts.at(-2);
 
   if (unitSuffix === 'seconds') {
@@ -16,7 +17,7 @@ export function bucketMetricQueriesGenerator(metricParts: string[]) {
   }
 
   const p50: AutoQueryDef = {
-    title: metric,
+    title,
     variant: 'p50',
     unit,
     queries: [
@@ -29,7 +30,7 @@ export function bucketMetricQueriesGenerator(metricParts: string[]) {
   };
 
   const breakdown: AutoQueryDef = {
-    title: metric,
+    title,
     variant: 'p50',
     unit,
     queries: [
@@ -42,7 +43,7 @@ export function bucketMetricQueriesGenerator(metricParts: string[]) {
   };
 
   const percentiles: AutoQueryDef = {
-    title: metric,
+    title,
     variant: 'percentiles',
     unit,
     queries: [
@@ -66,7 +67,7 @@ export function bucketMetricQueriesGenerator(metricParts: string[]) {
   };
 
   const heatmap: AutoQueryDef = {
-    title: metric,
+    title,
     variant: 'heatmap',
     unit,
     queries: [

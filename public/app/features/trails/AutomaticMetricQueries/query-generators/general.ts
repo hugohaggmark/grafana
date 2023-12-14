@@ -1,6 +1,6 @@
 import { VAR_FILTERS_EXPR, VAR_GROUP_BY_EXP, VAR_METRIC_EXPR } from '../../shared';
 import { simpleGraphBuilder } from '../graph-builders/simple';
-import { AutoQueryDef } from '../types';
+import { AutoQueryDef, AutoQueryInfo } from '../types';
 import { getGrafanaUnit } from '../units';
 
 export type AutoQueryParameters = {
@@ -10,7 +10,7 @@ export type AutoQueryParameters = {
 };
 
 /** This suffix will set rate to true */
-const RATE_SUFFIXES = new Set(['count', 'total', 'sum']);
+const RATE_SUFFIXES = new Set(['count', 'total']);
 
 /** Non-default aggregattion keyed by suffix */
 const SPECIFIC_AGGREGATIONS_FOR_SUFFIX: Record<string, string> = {
@@ -19,8 +19,8 @@ const SPECIFIC_AGGREGATIONS_FOR_SUFFIX: Record<string, string> = {
 };
 
 export function getGeneratorParameters(suffix?: string): AutoQueryParameters {
-  if (suffix == null) {
-    throw new Error(`Cannot get generator parameters for ${suffix}`);
+  if (suffix == null || suffix == '') {
+    throw new Error(`Cannot get generator parameters for undefined of blank suffix`);
   }
 
   if (suffix === 'sum') {
@@ -38,7 +38,7 @@ export function getGeneratorParameters(suffix?: string): AutoQueryParameters {
 export function generalMetricQueriesGenerator(metricParts: string[]) {
   const suffix = metricParts.at(-1);
   const params = getGeneratorParameters(suffix);
-  return generateQueries(metricParts, params);
+  return generateQueries(params);
 }
 
 export function sumMetricQueriesGenerator(metricParts: string[]) {
@@ -53,38 +53,48 @@ export function sumMetricQueriesGenerator(metricParts: string[]) {
     // But the suffix of sum must always have the following parameters
     rate: true,
   };
-  return generateQueries(metricParts, params);
+  return generateQueries(params);
 }
 
-export function generateQueries(metricParts: string[], { agg, rate, unit }: AutoQueryParameters) {
-  const title = metricParts.join('_');
+const GENERAL_BASE_QUERY = `${VAR_METRIC_EXPR}${VAR_FILTERS_EXPR}`;
+const GENERAL_RATE_BASE_QUERY = `rate(${GENERAL_BASE_QUERY}[$__rate_interval])`;
 
-  let query = `${VAR_METRIC_EXPR}${VAR_FILTERS_EXPR}`;
-  if (rate) {
-    query = `rate(${query}[$__rate_interval])`;
-  }
+export function getGeneralBaseQuery(rate: boolean) {
+  return rate ? GENERAL_RATE_BASE_QUERY : GENERAL_BASE_QUERY;
+}
 
-  const main: AutoQueryDef = {
-    title: `${title}`,
+export function generateQueries({ agg, rate, unit }: AutoQueryParameters): AutoQueryInfo {
+  const baseQuery = getGeneralBaseQuery(rate);
+
+  const main = createMainQuery(baseQuery, agg, unit);
+
+  const breakdown = createBreakdownQuery(baseQuery, agg, unit);
+
+  return { preview: main, main: main, breakdown: breakdown, variants: [] };
+}
+
+function createMainQuery(baseQuery: string, agg: string, unit: string): AutoQueryDef {
+  return {
+    title: `${VAR_METRIC_EXPR}`,
     variant: 'graph',
     unit,
-    queries: [{ refId: 'A', expr: `${agg}(${query})` }],
+    queries: [{ refId: 'A', expr: `${agg}(${baseQuery})` }],
     vizBuilder: simpleGraphBuilder,
   };
+}
 
-  const breakdown: AutoQueryDef = {
-    title: `${title}`,
+function createBreakdownQuery(baseQuery: string, agg: string, unit: string): AutoQueryDef {
+  return {
+    title: `${VAR_METRIC_EXPR}`,
     variant: 'graph',
     unit,
     queries: [
       {
         refId: 'A',
-        expr: `${agg}(${query}) by(${VAR_GROUP_BY_EXP})`,
+        expr: `${agg}(${baseQuery}) by(${VAR_GROUP_BY_EXP})`,
         legendFormat: `{{${VAR_GROUP_BY_EXP}}}`,
       },
     ],
     vizBuilder: simpleGraphBuilder,
   };
-
-  return { preview: main, main: main, breakdown: breakdown, variants: [] };
 }

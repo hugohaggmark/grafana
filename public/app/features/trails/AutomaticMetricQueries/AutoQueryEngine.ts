@@ -20,20 +20,23 @@ const SUFFIX_TO_GENERATOR: Record<string, MetricQueriesGenerator> = {
   sum: sumMetricQueriesGenerator,
 };
 
-export function getQueryGeneratorFor(suffix: string) {
+function getQueryGeneratorFor(suffix?: string) {
+  if (!suffix || suffix === '') {
+    return null;
+  }
   return SUFFIX_TO_GENERATOR[suffix] || generalMetricQueriesGenerator;
 }
 
 export function getAutoQueriesForMetric(metric: string): AutoQueryInfo {
   const metricParts = metric.split('_');
 
-  const suffix = metric.at(-1);
-
-  if (!suffix) {
-    throw new Error(`Unable to get queries for malformed metric ${metric}`);
-  }
+  const suffix = metricParts.at(-1);
 
   const generator = getQueryGeneratorFor(suffix);
+
+  if (!generator) {
+    throw new Error(`Unable to generate queries for metric "${metric}" due to issues with derived suffix "${suffix}"`);
+  }
 
   return generator(metricParts);
 }
