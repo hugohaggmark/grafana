@@ -1,10 +1,10 @@
-import { VAR_FILTERS_EXPR, VAR_GROUP_BY_EXP, VAR_METRIC_EXPR } from '../../shared';
-import { heatmapGraphBuilder } from '../graph-builders/heatmap';
-import { percentilesGraphBuilder } from '../graph-builders/percentiles';
-import { simpleGraphBuilder } from '../graph-builders/simple';
-import { AutoQueryDef } from '../types';
+import { VAR_FILTERS_EXPR, VAR_GROUP_BY_EXP, VAR_METRIC_EXPR } from '../../../shared';
+import { heatmapGraphBuilder } from '../../graph-builders/heatmap';
+import { percentilesGraphBuilder } from '../../graph-builders/percentiles';
+import { simpleGraphBuilder } from '../../graph-builders/simple';
+import { AutoQueryDef } from '../../types';
 
-export function bucketMetricQueriesGenerator(metricParts: string[]) {
+function generator(metricParts: string[]) {
   let unit = 'short';
 
   const title = `${VAR_METRIC_EXPR}`;
@@ -82,3 +82,5 @@ export function bucketMetricQueriesGenerator(metricParts: string[]) {
 
   return { preview: p50, main: percentiles, variants: [percentiles, heatmap], breakdown: breakdown };
 }
+
+export default { generator };
