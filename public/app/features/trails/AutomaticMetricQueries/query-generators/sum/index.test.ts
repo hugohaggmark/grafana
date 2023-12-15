@@ -7,7 +7,7 @@ const getGeneratorParameters = jest.spyOn(rules, 'getGeneratorParameters');
 
 import general from '.';
 
-describe('general.generator', () => {
+describe('sum.generator', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
