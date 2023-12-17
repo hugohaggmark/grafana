@@ -9,3 +9,15 @@ apiVersion: 1
 #   type: file
 #   options:
 #     path: /var/lib/grafana/dashboards
+providers:
+  - name: 'aaa'
+    orgId: 1
+    folder: 'one/two'
+    folderUid: ''
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 20
+    allowUiUpdates: false
+    options:
+      path: /Users/tb/Desktop/dash/
+      foldersFromFilesStructure: false
