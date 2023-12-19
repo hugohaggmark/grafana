@@ -5,7 +5,7 @@ describe('AutoQueryEngine', () => {
     it.each([
       // General
       ['my_metric_count', 'sum(rate(${metric}{${filters}}[$__rate_interval]))', 'short'],
-      ['my_metric_seconds_count', 'sum(rate(${metric}{${filters}}[$__rate_interval]))', 's'],
+      ['my_metric_seconds_count', 'sum(rate(${metric}{${filters}}[$__rate_interval]))', 'short'],
       ['my_metric_bytes', 'avg(${metric}{${filters}})', 'bytes'],
       ['my_metric_seconds', 'avg(${metric}{${filters}})', 's'],
       ['my_metric_general', 'avg(${metric}{${filters}})', 'short'],
@@ -50,7 +50,7 @@ describe('AutoQueryEngine', () => {
     it.each([
       // General
       ['my_metric_count', 'sum(rate(${metric}{${filters}}[$__rate_interval]))', 'short'],
-      ['my_metric_seconds_count', 'sum(rate(${metric}{${filters}}[$__rate_interval]))', 's'],
+      ['my_metric_seconds_count', 'sum(rate(${metric}{${filters}}[$__rate_interval]))', 'short'],
       ['my_metric_bytes', 'avg(${metric}{${filters}})', 'bytes'],
       ['my_metric_seconds', 'avg(${metric}{${filters}})', 's'],
       ['my_metric_general', 'avg(${metric}{${filters}})', 'short'],
@@ -87,7 +87,7 @@ describe('AutoQueryEngine', () => {
     it.each([
       // General
       ['my_metric_count', 'sum(rate(${metric}{${filters}}[$__rate_interval])) by(${groupby})', 'short'],
-      ['my_metric_seconds_count', 'sum(rate(${metric}{${filters}}[$__rate_interval])) by(${groupby})', 's'],
+      ['my_metric_seconds_count', 'sum(rate(${metric}{${filters}}[$__rate_interval])) by(${groupby})', 'short'],
       ['my_metric_bytes', 'avg(${metric}{${filters}}) by(${groupby})', 'bytes'],
       ['my_metric_seconds', 'avg(${metric}{${filters}}) by(${groupby})', 's'],
       ['my_metric_general', 'avg(${metric}{${filters}}) by(${groupby})', 'short'],
