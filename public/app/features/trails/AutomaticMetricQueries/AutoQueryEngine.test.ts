@@ -119,4 +119,67 @@ describe('AutoQueryEngine', () => {
       expect(defs.main.unit).toEqual(expectedUnit);
     });
   });
+
+  describe('Variant queries', () => {
+    it.each([
+      // General
+      ['my_metric_count', []],
+      ['my_metric_seconds_count', []],
+      ['my_metric_bytes', []],
+      ['my_metric_seconds', []],
+      ['my_metric_general', []],
+      ['my_metric_seconds_total', []],
+      // Sum
+      ['my_metric_seconds_sum', []],
+      // Bucket
+      [
+        'my_metric_bucket',
+        [
+          {
+            variant: 'percentiles',
+            unit: 'short',
+            exprs: [
+              'histogram_quantile(0.99, sum by(le) (rate(${metric}{${filters}}[$__rate_interval])))',
+              'histogram_quantile(0.90, sum by(le) (rate(${metric}{${filters}}[$__rate_interval])))',
+              'histogram_quantile(0.50, sum by(le) (rate(${metric}{${filters}}[$__rate_interval])))',
+            ],
+          },
+          {
+            variant: 'heatmap',
+            unit: 'short',
+            exprs: ['sum by(le) (rate(${metric}{${filters}}[$__rate_interval]))'],
+          },
+        ],
+      ],
+      [
+        'my_metric_seconds_bucket',
+        [
+          {
+            variant: 'percentiles',
+            unit: 's',
+            exprs: [
+              'histogram_quantile(0.99, sum by(le) (rate(${metric}{${filters}}[$__rate_interval])))',
+              'histogram_quantile(0.90, sum by(le) (rate(${metric}{${filters}}[$__rate_interval])))',
+              'histogram_quantile(0.50, sum by(le) (rate(${metric}{${filters}}[$__rate_interval])))',
+            ],
+          },
+          {
+            variant: 'heatmap',
+            unit: 's',
+            exprs: ['sum by(le) (rate(${metric}{${filters}}[$__rate_interval]))'],
+          },
+        ],
+      ],
+    ])('Given metric named %s should generate variants', (metric, expectedVariants) => {
+      const defs = getAutoQueriesForMetric(metric);
+
+      const received = defs.variants.map((variant) => ({
+        variant: variant.variant,
+        unit: variant.unit,
+        exprs: variant.queries.map((query) => query.expr),
+      }));
+
+      expect(received).toStrictEqual(expectedVariants);
+    });
+  });
 });
