@@ -1,20 +1,7 @@
+import { SUFFIX_TO_EXPECTED_PARAMS } from '../__test__/suffix.cases';
+import { forEachKeyValue } from '../__test__/util';
+
 import { getGeneratorParameters } from './rules';
-
-export const SUFFIX_TO_EXPECTED_PARAMS = {
-  count: { agg: 'sum', rate: true, unit: 'short' },
-  total: { agg: 'sum', rate: true, unit: 'short' },
-  thing: { agg: 'avg', rate: false, unit: 'short' },
-  seconds: { agg: 'avg', rate: false, unit: 's' },
-  bytes: { agg: 'avg', rate: false, unit: 'bytes' },
-};
-
-export function forEachKeyValue<K extends string, V>(obj: Record<K, V>, callback: (key: K, value: V) => void) {
-  let key: K;
-  for (key in obj) {
-    const value = obj[key];
-    callback(key, value);
-  }
-}
 
 describe('getGeneratorParameters', () => {
   describe('should throw an exception', () => {

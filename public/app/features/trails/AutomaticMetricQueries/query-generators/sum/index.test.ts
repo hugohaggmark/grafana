@@ -1,6 +1,7 @@
+import { SUFFIX_TO_EXPECTED_PARAMS } from '../__test__/suffix.cases';
+import { forEachKeyValue } from '../__test__/util';
 import * as queries from '../general/queries';
 import * as rules from '../general/rules';
-import { SUFFIX_TO_EXPECTED_PARAMS, forEachKeyValue } from '../general/rules.test';
 
 const generateQueries = jest.spyOn(queries, 'generateQueries');
 const getGeneratorParameters = jest.spyOn(rules, 'getGeneratorParameters');
@@ -12,7 +13,7 @@ describe('sum.generator', () => {
     jest.clearAllMocks();
   });
 
-  describe('for metric lacking a "_sum" suffix', () => {
+  describe('when metric does not have a "_sum" suffix', () => {
     const metricParts = ['metric', 'without', 'sum', 'suffix'];
     test('results in thrown error', () => {
       expect(() => general.generator(metricParts)).toThrowError();
