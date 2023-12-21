@@ -2,7 +2,6 @@ package provisioning
 
 import (
 	"context"
-	"slices"
 
 	"github.com/prometheus/alertmanager/config"
 
